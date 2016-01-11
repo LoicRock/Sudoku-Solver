@@ -7,7 +7,7 @@
 
 typedef struct
 {
-    char** value;
+    int** value;
     int nbr;
     int nbc;
     int size_cell_c;
@@ -31,12 +31,12 @@ void display_separator(int nbc,int nbr)
     }
     else if(nbr==16)
     {
-        printf("+------+------+------+------+\n");
+        printf("+------------+------------+------------+------------+\n");
     }
 
 }
 
-void display_sudoku(int nbc,int nbr,char s[nbc][nbr],int sizer,int sizec)
+void display_sudoku(int nbc,int nbr,int s[nbc][nbr],int sizer,int sizec)
 {
     int i,j;
 
@@ -49,33 +49,45 @@ void display_sudoku(int nbc,int nbr,char s[nbc][nbr],int sizer,int sizec)
         for(j=0; j<nbr; j++)
         {
 
-            if(j==sizer || j==sizer*2)
+            if(j==sizer || j==sizer*2 || j==sizer*3)
             {
                 printf("|");
             }
+            if(s[i][j]==0)
+            {
+                printf(" . ");
+            }
+            else if(s[i][j]>9)
+            {
+                printf(" %d",s[i][j]);
+            }else{
+             printf(" %d ",s[i][j]);
+            }
 
-            printf(" %c ",s[i][j]);
+
             if(j==nbc-1)
             {
                 printf("|");
                 printf("\n");
-                if(i==sizer-1 || i==(sizer*2)-1 || i==(sizer*3)-1)
+                if(i==sizer-1 && sizer%sizec==0 || i==(sizer*2)-1  && sizer%sizec==0|| i==(sizer*3)-1 && sizer%sizec==0 || i==(sizer*4)-1 && sizer%sizec==0)
                 {
                     display_separator(nbc,nbr);
 
+                }else if(i==sizec-1 ||i==(sizec*2)-1||i==(sizec*3)-1){
+
+                display_separator(nbc,nbr);
                 }
             }
 
         }
+
     }
-
-
 
 
 
 }
 
-void init_sudoku(int nbc,int nbr,char s[nbc][nbr])
+void init_sudoku(int nbc,int nbr,int s[nbc][nbr])
 {
 
     int i,j;
@@ -83,7 +95,7 @@ void init_sudoku(int nbc,int nbr,char s[nbc][nbr])
     {
         for(j=0; j<nbr; j++)
         {
-            s[i][j]=' ';
+            s[i][j]=0;
         }
     }
 
@@ -104,7 +116,7 @@ void sleep(unsigned long int n)
 }
 
 
-void lire_fichier(int nbc,int nbr,char s[nbc][nbr],char *filename)
+void lire_fichier(int nbc,int nbr,int s[nbc][nbr],char *filename)
 {
     int i,j;
     FILE* fic=NULL;
@@ -119,7 +131,7 @@ void lire_fichier(int nbc,int nbr,char s[nbc][nbr],char *filename)
             for (j = 0; j < nbr; j++)
             {
 
-                fscanf(fic,"%c ",&s[i][j]);
+                fscanf(fic,"%d ",&s[i][j]);
 
 
             }
@@ -131,20 +143,6 @@ void lire_fichier(int nbc,int nbr,char s[nbc][nbr],char *filename)
 }
 
 
-void zero_to_space(int nbc,int nbr,char s[nbc][nbr])
-{
-    int i,j;
-    for(i=0; i<nbc; i++)
-    {
-        for(j=0; j<nbr; j++)
-        {
-            if(s[i][j]=='0')
-            {
-                s[i][j]=' ';
-            }
-        }
-    }
-}
 
 int countlines(char *filename)
 {
@@ -178,58 +176,54 @@ void print_bool(bool a)
 
 //backtracking
 
-bool absentSurColonne(int nbr,int nbc, int k,char s[nbr][nbc],int j)
+bool absentSurColonne(int nbr,int nbc, int k,int s[nbr][nbc],int j)
 {
-    char a;
+
     int i;
     for (i=0; i < nbc; i++)
     {
-        a = k + '0';
-        if (s[i][j] == a)
+        if (s[i][j] == k)
             return false;
     }
     return true;
 }
 
-bool absentSurLigne(int nbr,int nbc, int k,char s[nbr][nbc],int i)
+bool absentSurLigne(int nbr,int nbc, int k,int s[nbr][nbc],int i)
 {
-    char a;
     int j ;
     for (j=0; j < nbr; j++)
     {
-        a = k + '0';
-        if (s[i][j] == a)
+        if (s[i][j] == k)
             return false;
     }
     return true;
 }
 
-bool absentSurBloc (int nbr,int nbc,char s[nbc][nbr],int k, int i, int j,int sizer,int sizec)
+bool absentSurBloc (int nbr,int nbc,int s[nbc][nbr],int k, int i, int j,int sizer,int sizec)
 {
-    char a;
+
+
 
     int i2 = i-(i%sizer);
     int j2 = j-(j%sizec);  // ou encore : _i = 3*(i/3), _j = 3*(j/3);
     for (i=i2; i < i2+sizer; i++)
         for (j=j2; j < j2+sizec; j++)
-            a = k + '0';
-    if (s[i][j] == a)
-        return false;
+            if (s[i][j] == k)
+                return false;
     return true;
 }
 
 
-bool estValide (int nbc,int nbr,char s[nbc][nbr], int position,int sizec,int sizer)
+bool estValide (int nbc,int nbr,int s[nbc][nbr], int position,int sizec,int sizer)
 {
 
-    char a;
     if (position == nbc*nbr)
         return true;
 
     int i = position/nbc;
     int j = position%nbc;
 
-    if (s[i][j] != ' ')
+    if (s[i][j] != 0)
     {
         return estValide(nbc,nbr,s,position+1,sizec,sizer);
     }
@@ -246,14 +240,14 @@ bool estValide (int nbc,int nbr,char s[nbc][nbr], int position,int sizec,int siz
 
         if (absentSurColonne(nbr,nbc,k,s,j)==true && absentSurLigne(nbr,nbc,k,s,i )==true && absentSurBloc(nbr,nbc,s,k,i,j,sizec,sizer)==true)
         {
-            a = k+'0';
-            s[i][j] = a;
+
+            s[i][j] = k;
 
             if (estValide (nbc,nbr,s, position+1,sizec,sizer))
                 return true;
         }
     }
-    s[i][j] = ' ';
+    s[i][j] = 0;
 
     return false;
 }
@@ -276,7 +270,6 @@ int select_size_cell_r(int nbline)
         break;
     case 16:
         size=4;
-        ;
         break;
     default:
         size=0;
@@ -287,6 +280,7 @@ int select_size_cell_r(int nbline)
 
 int select_size_cell_c(int nbline)
 {
+printf("nbline : %d\n",nbline);
 
     int size;
 
@@ -304,7 +298,6 @@ int select_size_cell_c(int nbline)
         break;
     case 16:
         size=4;
-        ;
         break;
     default:
         size=0;
@@ -328,7 +321,7 @@ int main()
     //init taille grille
     s.nbc=nbline;
     s.nbr=nbline;
-    char tab[s.nbr][s.nbc];
+    int tab[s.nbr][s.nbc];
     s.value=tab;
     int sizec,sizer;
     s.size_cell_c=select_size_cell_c(nbline);
@@ -342,8 +335,6 @@ int main()
     lire_fichier(s.nbc,s.nbr,s.value,fnamer); //Lit le fichier et remplis la grille
     printf("Aprés lecture du fichier \n");
     display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
-    printf("Aprés remplacement des zero:\n");
-    zero_to_space(s.nbc,s.nbr,s.value); //Remplace les zero par des espace
     display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
 
     printf("Résolution : \n");
