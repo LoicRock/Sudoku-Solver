@@ -204,10 +204,10 @@ bool absentSurBloc (int nbr,int nbc,int s[nbc][nbr],int k, int i, int j,int size
 
 
 
-    int i2 = i-(i%sizer);
-    int j2 = j-(j%sizec);  // ou encore : _i = 3*(i/3), _j = 3*(j/3);
-    for (i=i2; i < i2+sizer; i++)
-        for (j=j2; j < j2+sizec; j++)
+    int i2 = i-(i%sizec);
+    int j2 = j-(j%sizer);  // ou encore : _i = 3*(i/3), _j = 3*(j/3);
+    for (i=i2; i < i2+sizec; i++)
+        for (j=j2; j < j2+sizer; j++)
             if (s[i][j] == k)
                 return false;
     return true;
