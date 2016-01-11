@@ -60,8 +60,10 @@ void display_sudoku(int nbc,int nbr,int s[nbc][nbr],int sizer,int sizec)
             else if(s[i][j]>9)
             {
                 printf(" %d",s[i][j]);
-            }else{
-             printf(" %d ",s[i][j]);
+            }
+            else
+            {
+                printf(" %d ",s[i][j]);
             }
 
 
@@ -73,9 +75,11 @@ void display_sudoku(int nbc,int nbr,int s[nbc][nbr],int sizer,int sizec)
                 {
                     display_separator(nbc,nbr);
 
-                }else if(i==sizec-1 ||i==(sizec*2)-1||i==(sizec*3)-1){
+                }
+                else if(i==sizec-1 ||i==(sizec*2)-1||i==(sizec*3)-1)
+                {
 
-                display_separator(nbc,nbr);
+                    display_separator(nbc,nbr);
                 }
             }
 
@@ -268,6 +272,9 @@ int select_size_cell_r(int nbline)
     case 9:
         size=3;
         break;
+    case 12:
+        size=3;
+        break;
     case 16:
         size=4;
         break;
@@ -280,7 +287,7 @@ int select_size_cell_r(int nbline)
 
 int select_size_cell_c(int nbline)
 {
-printf("nbline : %d\n",nbline);
+    printf("nbline : %d\n",nbline);
 
     int size;
 
@@ -295,6 +302,9 @@ printf("nbline : %d\n",nbline);
         break;
     case 9:
         size=3;
+        break;
+    case 12:
+        size=4;
         break;
     case 16:
         size=4;
