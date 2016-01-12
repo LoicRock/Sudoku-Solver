@@ -113,7 +113,7 @@ void init_sudoku(int nbc,int nbr,int s[nbc][nbr])
 
 
 
-void lire_fichier(int nbc,int nbr,int s[nbc][nbr],char *filename)
+void read_file(int nbc,int nbr,int s[nbc][nbr],char *filename)
 {
     int i,j;
     FILE* fic=NULL;
@@ -173,7 +173,7 @@ void print_bool(bool a)
 
 //backtracking
 
-bool absentSurColonne(int nbr,int nbc, int k,int s[nbr][nbc],int j)
+bool notInColumn(int nbr,int nbc, int k,int s[nbr][nbc],int j)
 {
 
     int i;
@@ -185,7 +185,7 @@ bool absentSurColonne(int nbr,int nbc, int k,int s[nbr][nbc],int j)
     return true;
 }
 
-bool absentSurLigne(int nbr,int nbc, int k,int s[nbr][nbc],int i)
+bool notInRow(int nbr,int nbc, int k,int s[nbr][nbc],int i)
 {
     int j ;
     for (j=0; j < nbr; j++)
@@ -196,7 +196,7 @@ bool absentSurLigne(int nbr,int nbc, int k,int s[nbr][nbc],int i)
     return true;
 }
 
-bool absentSurBloc (int nbr,int nbc,int s[nbc][nbr],int k, int i, int j,int sizer,int sizec)
+bool notInCell (int nbr,int nbc,int s[nbc][nbr],int k, int i, int j,int sizer,int sizec)
 {
 
 
@@ -211,7 +211,7 @@ bool absentSurBloc (int nbr,int nbc,int s[nbc][nbr],int k, int i, int j,int size
 }
 
 
-bool estValide (int nbc,int nbr,int s[nbc][nbr], int position,int sizec,int sizer)
+bool isValid (int nbc,int nbr,int s[nbc][nbr], int position,int sizec,int sizer)
 {
 
     if (position == nbc*nbr)
@@ -222,25 +222,20 @@ bool estValide (int nbc,int nbr,int s[nbc][nbr], int position,int sizec,int size
 
     if (s[i][j] != 0)
     {
-        return estValide(nbc,nbr,s,position+1,sizec,sizer);
+        return isValid(nbc,nbr,s,position+1,sizec,sizer);
     }
 
 
     int k;
     for (k=1; k<=nbc; k++)
     {
-        /* printf("k: %d \n",k);
-         print_bool(absentSurColonne(nbr,nbc,k,s,j));
-         print_bool(absentSurLigne(nbr,nbc,k,s,i ) );
-         print_bool(absentSurBloc(nbr,nbc,s,k,i,j,sizec,sizer));
-         printf("\n");*/
 
-        if (absentSurColonne(nbr,nbc,k,s,j)==true && absentSurLigne(nbr,nbc,k,s,i )==true && absentSurBloc(nbr,nbc,s,k,i,j,sizec,sizer)==true)
+        if (notInColumn(nbr,nbc,k,s,j)==true && notInRow(nbr,nbc,k,s,i )==true && notInCell(nbr,nbc,s,k,i,j,sizec,sizer)==true)
         {
 
             s[i][j] = k;
 
-            if (estValide (nbc,nbr,s, position+1,sizec,sizer))
+            if (isValid(nbc,nbr,s, position+1,sizec,sizer))
                 return true;
         }
     }
@@ -325,7 +320,7 @@ int main()
 
 
 
-    //init taille grille
+    //init grid size
     s.nbc=nbline;
     s.nbr=nbline;
     int tab[s.nbr][s.nbc];
@@ -337,7 +332,7 @@ int main()
 
 
     init_sudoku(s.nbc,s.nbr,s.value);//init grid at 0
-    lire_fichier(s.nbc,s.nbr,s.value,fnamer); //read file and fill grid
+    read_file(s.nbc,s.nbr,s.value,fnamer); //read file and fill grid
     printf("Apres lecture du fichier \n");
     display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
 
@@ -347,7 +342,7 @@ int main()
     clock_t begin, end;//start clock
     begin = clock();
 
-    estValide(s.nbc,s.nbr,s.value,0,s.size_cell_c,s.size_cell_r);//Backtracking
+    isValid(s.nbc,s.nbr,s.value,0,s.size_cell_c,s.size_cell_r);//Backtracking
     display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
 
     double time_spent;
