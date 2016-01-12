@@ -16,6 +16,14 @@ typedef struct
     int size_cell_r;
 } Sudoku;
 
+
+typedef struct _list
+{
+    int i, j;
+    int nbValeursPossibles;
+    struct _list *next;
+} LIST;
+
 void display_separator(int nbc,int nbr)
 {
 
@@ -77,7 +85,7 @@ void display_sudoku(int nbc,int nbr,int s[nbc][nbr],int sizer,int sizec)
             {
                 printf("|");
                 printf("\n");
-                if(i==sizer-1 && sizer%sizec==0 || i==(sizer*2)-1  && sizer%sizec==0|| i==(sizer*3)-1 && sizer%sizec==0 || i==(sizer*4)-1 && sizer%sizec==0)
+                if((i==sizer-1 && sizer%sizec==0) || (i==(sizer*2)-1  && sizer%sizec==0) || (i==(sizer*3)-1 && sizer%sizec==0) || (i==(sizer*4)-1 && sizer%sizec==0))
                 {
                     display_separator(nbc,nbr);
 
@@ -305,53 +313,66 @@ int select_size_cell_c(int nbline)
 }
 
 
+
 int main()
 {
-    Sudoku s;
 
-    char fnamer[100]="";
-    while (access(fnamer, R_OK ) == -1){
-    printf("Enter a name file [exemple.txt]: \n");
-    scanf("%s",&fnamer);
+    int choice =0;
+    while (choice!=2)
+    {
+        Sudoku s;
+
+        char fnamer[100]="";
+        while (access(fnamer, R_OK ) == -1)
+        {
+            printf("Enter a name file [exemple.txt]: \n");
+            scanf("%s",&fnamer);
+        }
+        int nbline=countlines(fnamer);
+
+
+
+
+
+        //init grid size
+        s.nbc=nbline;
+        s.nbr=nbline;
+        int tab[s.nbr][s.nbc];
+        s.value=tab;
+        //Get cell size
+        s.size_cell_c=select_size_cell_c(nbline);
+        s.size_cell_r=select_size_cell_r(nbline);
+
+
+        init_sudoku(s.nbc,s.nbr,s.value);//init grid at 0
+        read_file(s.nbc,s.nbr,s.value,fnamer); //read file and fill grid
+        printf("Apres lecture du fichier \n");
+        display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
+
+        printf("\n");
+        printf("Resolution en cours...\n");
+        printf("\n");
+
+        clock_t begin, end;//start clock
+        begin = clock();
+
+        isValid(s.nbc,s.nbr,s.value,0,s.size_cell_c,s.size_cell_r);//Backtracking
+        printf("Solution : \n");
+        display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
+
+
+        double time_spent;
+        end = clock(); //end clock
+        time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+        printf("Temps de resolution : \n");
+        printf("%f s\n",time_spent);
+        printf("%f ms\n",time_spent*1000);
+        printf("\n");
+
+        printf("Load another file ? [1]\n");
+        printf("Quit [2]\n");
+        scanf("%d",&choice);
+
     }
-    int nbline=countlines(fnamer);
-
-
-
-
-
-    //init grid size
-    s.nbc=nbline;
-    s.nbr=nbline;
-    int tab[s.nbr][s.nbc];
-    s.value=tab;
-    int sizec,sizer;
-    //Get cell size
-    s.size_cell_c=select_size_cell_c(nbline);
-    s.size_cell_r=select_size_cell_r(nbline);
-
-
-    init_sudoku(s.nbc,s.nbr,s.value);//init grid at 0
-    read_file(s.nbc,s.nbr,s.value,fnamer); //read file and fill grid
-    printf("Apres lecture du fichier \n");
-    display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
-
-    printf("Resolution : \n");
-
-
-    clock_t begin, end;//start clock
-    begin = clock();
-
-    isValid(s.nbc,s.nbr,s.value,0,s.size_cell_c,s.size_cell_r);//Backtracking
-    display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
-
-    double time_spent;
-    end = clock(); //end clock
-    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("Temps de resolution : \n");
-    printf("%f s\n",time_spent);
-    printf("%f ms\n",time_spent/1000);
-
-
     return 0;
 }
