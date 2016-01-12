@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 
 
@@ -28,6 +29,10 @@ void display_separator(int nbc,int nbr)
     else if(nbr==9)
     {
         printf("+---------+---------+---------+\n");
+    }
+    else if(nbr==12)
+    {
+        printf("+------------+------------+------------+\n");
     }
     else if(nbr==16)
     {
@@ -76,7 +81,7 @@ void display_sudoku(int nbc,int nbr,int s[nbc][nbr],int sizer,int sizec)
                     display_separator(nbc,nbr);
 
                 }
-                else if(i==sizec-1 ||i==(sizec*2)-1||i==(sizec*3)-1)
+                else if(i==sizec-1 ||i==(sizec*2)-1||i==(sizec*3)-1 || i==(sizec*4)-1)
                 {
 
                     display_separator(nbc,nbr);
@@ -236,11 +241,11 @@ bool estValide (int nbc,int nbr,int s[nbc][nbr], int position,int sizec,int size
     int k;
     for (k=1; k<=nbc; k++)
     {
-        printf("k: %d \n",k);
-        print_bool(absentSurColonne(nbr,nbc,k,s,j));
-        print_bool(absentSurLigne(nbr,nbc,k,s,i ) );
-        print_bool(absentSurBloc(nbr,nbc,s,k,i,j,sizec,sizer));
-        printf("\n");
+        /* printf("k: %d \n",k);
+         print_bool(absentSurColonne(nbr,nbc,k,s,j));
+         print_bool(absentSurLigne(nbr,nbc,k,s,i ) );
+         print_bool(absentSurBloc(nbr,nbc,s,k,i,j,sizec,sizer));
+         printf("\n");*/
 
         if (absentSurColonne(nbr,nbc,k,s,j)==true && absentSurLigne(nbr,nbc,k,s,i )==true && absentSurBloc(nbr,nbc,s,k,i,j,sizec,sizer)==true)
         {
@@ -328,28 +333,40 @@ int main()
 
 
 
+
+
     //init taille grille
     s.nbc=nbline;
     s.nbr=nbline;
     int tab[s.nbr][s.nbc];
     s.value=tab;
     int sizec,sizer;
+    //Get cell size
     s.size_cell_c=select_size_cell_c(nbline);
     s.size_cell_r=select_size_cell_r(nbline);
-    printf("%d",s.size_cell_c);
-    printf("%d",s.size_cell_r);
 
 
-
-    init_sudoku(s.nbc,s.nbr,s.value);//Initialise la grille à 0
-    lire_fichier(s.nbc,s.nbr,s.value,fnamer); //Lit le fichier et remplis la grille
-    printf("Aprés lecture du fichier \n");
-    display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
+    init_sudoku(s.nbc,s.nbr,s.value);//init grid at 0
+    lire_fichier(s.nbc,s.nbr,s.value,fnamer); //read file and fill grid
+    printf("Apres lecture du fichier \n");
     display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
 
-    printf("Résolution : \n");
-    estValide(s.nbc,s.nbr,s.value,0,s.size_cell_c,s.size_cell_r);
+    printf("Resolution : \n");
+
+
+    clock_t begin, end;//start clock
+    begin = clock();
+
+    estValide(s.nbc,s.nbr,s.value,0,s.size_cell_c,s.size_cell_r);//Backtracking
     display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
+
+    double time_spent;
+    end = clock(); //end clock
+    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("Temps de resolution : \n");
+    printf("%f s\n",time_spent);
+    printf("%f ms\n",time_spent/1000);
+
 
     return 0;
 }
