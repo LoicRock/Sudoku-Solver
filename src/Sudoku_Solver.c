@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
+#include <unistd.h>
 
 
 
@@ -110,19 +111,6 @@ void init_sudoku(int nbc,int nbr,int s[nbc][nbr])
 
 }
 
-/*Fonction sleep*/
-void sleep(unsigned long int n)
-{
-    /* boucle vide parcourue (n * 100000) fois*/
-    int i = 0;
-    unsigned long int max = n * 100000;
-    do
-    {
-
-        i++;
-    }
-    while(i <= max);
-}
 
 
 void lire_fichier(int nbc,int nbr,int s[nbc][nbr],char *filename)
@@ -327,8 +315,10 @@ int main()
     Sudoku s;
 
     char fnamer[100]="";
+    while (access(fnamer, R_OK ) == -1){
     printf("Enter a name file [exemple.txt]: \n");
     scanf("%s",&fnamer);
+    }
     int nbline=countlines(fnamer);
 
 
