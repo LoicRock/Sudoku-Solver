@@ -4,9 +4,6 @@
 #include <time.h>
 #include <unistd.h>
 
-
-
-
 typedef struct
 {
     int** value;
@@ -16,36 +13,30 @@ typedef struct
     int size_cell_r;
 } Sudoku;
 
-
-typedef struct _list
-{
-    int i, j;
-    int nbValeursPossibles;
-    struct _list *next;
-} LIST;
-
 void display_separator(int nbc,int nbr)
 {
 
-    if(nbr==4)
+    switch(nbr)
     {
+    case 4:
         printf("+------+------+\n");
-    }
-    else if(nbr==6)
-    {
+        break;
+    case 6:
         printf("+---------+---------+\n");
-    }
-    else if(nbr==9)
-    {
+        break;
+    case 9:
         printf("+---------+---------+---------+\n");
-    }
-    else if(nbr==12)
-    {
+        break;
+    case 12:
         printf("+------------+------------+------------+\n");
-    }
-    else if(nbr==16)
-    {
+        break;
+    case 16:
         printf("+------------+------------+------------+------------+\n");
+        break;
+    default:
+        printf("Error separator");
+        break;
+
     }
 
 }
@@ -165,20 +156,6 @@ int countlines(char *filename)
 }
 
 
-void print_bool(bool a)
-{
-    if (a==true)
-    {
-
-        printf("true");
-    }
-    else
-    {
-        printf("false");
-    }
-
-}
-
 //backtracking
 
 bool notInColumn(int nbr,int nbc, int k,int s[nbr][nbc],int j)
@@ -289,6 +266,7 @@ int select_size_cell_c(int nbline)
 
     switch(nbline)
     {
+
     case 4:
         size=2;
 
@@ -330,10 +308,6 @@ int main()
         }
         int nbline=countlines(fnamer);
 
-
-
-
-
         //init grid size
         s.nbc=nbline;
         s.nbr=nbline;
@@ -342,7 +316,6 @@ int main()
         //Get cell size
         s.size_cell_c=select_size_cell_c(nbline);
         s.size_cell_r=select_size_cell_r(nbline);
-
 
         init_sudoku(s.nbc,s.nbr,s.value);//init grid at 0
         read_file(s.nbc,s.nbr,s.value,fnamer); //read file and fill grid
@@ -359,7 +332,6 @@ int main()
         isValid(s.nbc,s.nbr,s.value,0,s.size_cell_c,s.size_cell_r);//Backtracking
         printf("Solution : \n");
         display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
-
 
         double time_spent;
         end = clock(); //end clock
