@@ -330,16 +330,33 @@ int main()
         begin = clock();
 
         isValid(s.nbc,s.nbr,s.value,0,s.size_cell_c,s.size_cell_r);//Backtracking
-        printf("Solution : \n");
-        display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
 
-        double time_spent;
-        end = clock(); //end clock
-        time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-        printf("Temps de resolution : \n");
-        printf("%f s\n",time_spent);
-        printf("%f ms\n",time_spent*1000);
-        printf("\n");
+        bool test=false;
+        int i,j;
+        for(i=0;i<s.nbc;i++){
+            for(j=0;j<s.nbr;j++){
+                if(tab[i][j]==0){
+                printf("Il y a une erreur dans la grille rentré \n");
+                test=false;
+                exit(true);
+                }else{
+                test=true;
+                }
+            }
+        }
+
+        if(test==true){
+            printf("Solution : \n");
+            display_sudoku(s.nbc,s.nbr,s.value,s.size_cell_c,s.size_cell_r);
+
+            double time_spent;
+            end = clock(); //end clock
+            time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+            printf("Temps de resolution : \n");
+            printf("%f s\n",time_spent);
+            printf("%f ms\n",time_spent*1000);
+            printf("\n");
+        }
 
         printf("Load another file ? [1]\n");
         printf("Quit [2]\n");
@@ -348,3 +365,7 @@ int main()
     }
     return 0;
 }
+
+
+
+
